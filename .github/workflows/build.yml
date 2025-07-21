@@ -19,11 +19,6 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
 
-    - name: Setup Windows SDK
-      uses: microsoft/setup-windows-sdk@v1.0
-      with:
-        version: '10.0.19041.0'
-
     - name: Build Solution
       run: msbuild SimpleVisor.sln /p:Configuration=Release /p:Platform=x64
 
