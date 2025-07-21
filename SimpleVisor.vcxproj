@@ -7,7 +7,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{YOUR-GUID-HERE}</2caf59a8-cb03-4d60-bd09-489c586c5978>
+    <ProjectGuid>{f3a2c9d1-8e2f-4a19-95d7-4b7f2c9e7d6b}</ProjectGuid>
     <Keyword>Driver</Keyword>
     <RootNamespace>SimpleVisor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
