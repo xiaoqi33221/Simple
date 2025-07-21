@@ -1,23 +1,37 @@
-name: C/C++ CI
+name: Build SimpleVisor Driver
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Setup Windows SDK
+      uses: microsoft/setup-windows-sdk@v1.0
+      with:
+        version: '10.0.19041.0'
+
+    - name: Build Solution
+      run: msbuild SimpleVisor.sln /p:Configuration=Release /p:Platform=x64
+
+    - name: List output directory
+      run: dir bin\x64\Release
+
+    - name: Upload driver artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: SimpleVisor-driver
+        path: bin\x64\Release\SimpleVisor.sys
