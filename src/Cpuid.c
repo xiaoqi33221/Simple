@@ -1,29 +1,20 @@
-#include "Cpuid.h"
-#include <intrin.h>
-#include <string.h>
+// 修改后的 Cpuid.c 示例代码
+#include "Vmx.h"  // 假设函数声明在这个头文件中，若没有可忽略
+#include <ntddk.h> // 需要 WDK 环境
 
-VOID
-VmHandleCpuid(
-    _In_ PGUEST_REGS GuestRegs
-    )
+// 如果你没有 Vmx.h，可以临时添加函数声明
+VOID VmHandleCpuid(_Inout_ PGUEST_REGS GuestRegs);
+
+// 示例函数实现
+VOID VmHandleCpuid(_Inout_ PGUEST_REGS GuestRegs)
 {
-    INT32 CpuInfo[4] = { 0 };
-    __cpuid(CpuInfo, (INT32)GuestRegs->Rax);
+    UNREFERENCED_PARAMETER(GuestRegs);
 
-    if (GuestRegs->Rax == 0x0)
-    {
-        CpuInfo[1] = 'htuA';  // EBX = "Auth"
-        CpuInfo[3] = 'itne';  // EDX = "enti"
-        CpuInfo[2] = 'DMAc';  // ECX = "cAMD"
-    }
-    else if (GuestRegs->Rax >= 0x80000002 && GuestRegs->Rax <= 0x80000004)
-    {
-        const char* fakeName = "AMD Ryzen 7 5800X 8-Core Processor";
-        memcpy(CpuInfo, fakeName + (GuestRegs->Rax - 0x80000002) * 16, 16);
-    }
+    // 修改 CPUID 返回值为伪造的 AMD CPU 标识符
+    GuestRegs->Rax = 0x68747541; // 'Auth'
+    GuestRegs->Rbx = 0x444D4163; // 'cAMD'
+    GuestRegs->Rcx = 0x69746E65; // 'enti'
+    GuestRegs->Rdx = 0x444D4163; // 'cAMD'
 
-    GuestRegs->Rax = CpuInfo[0];
-    GuestRegs->Rbx = CpuInfo[1];
-    GuestRegs->Rcx = CpuInfo[2];
-    GuestRegs->Rdx = CpuInfo[3];
+    // 注意：你应该根据实际 GuestRegs 定义设置正确寄存器值
 }
