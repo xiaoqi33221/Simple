@@ -1,29 +1,19 @@
+// 修改后的 Vmx.c 示例代码
 #include "Vmx.h"
-#include "Cpuid.h"
+#include <ntddk.h> // 需要 WDK 环境
 
-// 模拟 __readvmx 宏或函数，用于读取 VMCS 字段
-extern unsigned int __readvmx(unsigned int field);
+// 临时声明函数，若你没有头文件
+VOID VmVmExitHandler(_Inout_ PGUEST_REGS GuestRegs);
 
-#define VMCS_EXIT_REASON 0x4402
-#define EXIT_REASON_CPUID 10
-
-VOID
-VmVmExitHandler(
-    _In_ PGUEST_REGS GuestRegs
-    )
+// 示例实现
+VOID VmVmExitHandler(_Inout_ PGUEST_REGS GuestRegs)
 {
-    unsigned int ExitReason = __readvmx(VMCS_EXIT_REASON);
+    // 检查是否是 CPUID 指令引起的 VM-Exit
+    ULONG ExitReason = __vmx_vmread(0x4402); // VM_EXIT_REASON
 
-    switch (ExitReason & 0xFFFF)
+    if ((ExitReason & 0xFFFF) == 10)  // 10 = CPUID
     {
-    case EXIT_REASON_CPUID:
-        VmHandleCpuid(GuestRegs);
-        // cpuid指令长度为2，跳过
-        GuestRegs->Rip += 2;
-        break;
-
-    default:
-        // 其他退出原因处理
-        break;
+        VmHandleCpuid(GuestRegs);  // 调用你自定义的 CPUID 伪造处理
+        __vmx_vmwrite(0x440E, __vmx_vmread(0x681E) + __vmx_vmread(0x440C)); // VM_RIP += VM_EXIT_INSTRUCTION_LENGTH
     }
 }
