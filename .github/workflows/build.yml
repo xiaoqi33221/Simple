@@ -27,11 +27,8 @@ jobs:
     - name: Build Solution
       run: msbuild SimpleVisor.sln /p:Configuration=Release /p:Platform=x64
 
-    - name: List output directory
-      run: dir bin\x64\Release
-
     - name: Upload driver artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: SimpleVisor-driver
         path: bin\x64\Release\SimpleVisor.sys
