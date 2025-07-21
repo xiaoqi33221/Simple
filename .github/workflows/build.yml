@@ -27,3 +27,6 @@ jobs:
       with:
         name: SimpleVisor-driver
         path: bin\x64\Release\SimpleVisor.sys
+    - name: Build Solution
+      run: msbuild SimpleVisor.sln /p:Configuration=Release /p:Platform=x64 /verbosity:detailed
+        
